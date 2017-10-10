@@ -55,6 +55,13 @@
     where fonds_num=#{fondsNum,jdbcType=VARCHAR} and ( catalog_num is null or catalog_num = "")
   </select>
   
+  <select id="queryCaseInfoCaseNum" resultType="String" parameterType="com.javen.model.CaseInfo" >
+    select 
+    case_num
+    from case_info
+    where fonds_num=#{fondsNum,jdbcType=VARCHAR} and catalog_num=#{catalogNum}
+  </select>
+  
    <select id="queryCaseInfoGdCaseNum" resultType="String" parameterType="com.javen.model.CaseInfo" >
     select 
     case_num

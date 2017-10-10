@@ -46,16 +46,18 @@ public class LuceneSearchFile {
         IndexWriter writer=new IndexWriter(dir, iwc);//创建索引
         File file=new File(filePath);
         File[] tempList = file.listFiles();
-        System.out.println(tempList.length);
+        System.out.println("所有文件长度为："+tempList.length);
         for(File fil:tempList){//遍历所需要创建索引的文件
             Document doc=new Document();//创建文档
         	String address=fil.getAbsolutePath();//找到该文件的地址
-        	String text=fileReaderAlone(address, "GBK");//读取地址文件成流（gbk）根据文件内容设定
-        	System.out.println(address);
-        	doc.add(new StringField("fileName",address.substring(address.lastIndexOf("\\")+1),Field.Store.YES));//将改文件名存在文档中，并设置成持久化
-        	doc.add(new StringField("filePath",address, Field.Store.YES));//将改文件地址存在文档中，并设置成持久化
-        	doc.add(new TextField("content",text,Field.Store.YES));//将改文件内容保存文档中，并设置持久化
-        	writer.addDocument(doc);//用索引器将该文档加在索引中
+        	if(address.indexOf(".txt")>0){
+	        	String text=fileReaderAlone(address, "GBK");//读取地址文件成流（gbk）根据文件内容设定
+	        	System.out.println(address);
+	        	doc.add(new StringField("fileName",address.substring(address.lastIndexOf("\\")+1),Field.Store.YES));//将改文件名存在文档中，并设置成持久化
+	        	doc.add(new StringField("filePath",address, Field.Store.YES));//将改文件地址存在文档中，并设置成持久化
+	        	doc.add(new TextField("content",text,Field.Store.YES));//将改文件内容保存文档中，并设置持久化
+	        	writer.addDocument(doc);//用索引器将该文档加在索引中
+        	}
         }
 			writer.close();
 			return writer;
@@ -79,13 +81,12 @@ public class LuceneSearchFile {
 			for (int i = 0; i < hitses.length; i++) {
 				 Map<String, String> map=new HashMap<String, String>();
 	             hitDoc = isearcher.doc(hitses[i].doc);//将数据集合中的整个文档取出
-	             System.out.println(hitDoc.get("fileName"));
 	             String fileName=hitDoc.get("fileName");//提出存储在文档中的字段
-	             String filePath="f:\\AcceptanceFile\\"+fileName.substring(0,fileName.indexOf("-"))+"\\"+fileName.substring(0,fileName.indexOf("-",fileName.indexOf("-")+1))+"\\"+fileName.substring(0,fileName.indexOf("-",fileName.indexOf("-",fileName.indexOf("-")+1)+1))+"/"+fileName.substring(0,fileName.indexOf("."))+".jpg";
-	             System.out.println(filePath);
+	             fileName=fileName.replace(".txt", ".jpg");
+	             System.out.println("被替换后的文件名是："+fileName);
 	             FileRecordsPicture fileRecordsPicture=new FileRecordsPicture();
 				 FileRecords fileRecords=new FileRecords();
-				 fileRecordsPicture=fileRecordsPictureDao.getAllFileRecordsPictureByFilePath(filePath);
+				 fileRecordsPicture=fileRecordsPictureDao.getAllFileRecordsPictureByFilePath(fileName);
 				 if(fileRecordsPicture!=null){
 				  	 fileRecords.setFileNum(fileRecordsPicture.getFileNum());
 					 fileRecords=fileRecordsDao.getEntity(fileRecords);
@@ -97,7 +98,7 @@ public class LuceneSearchFile {
 						 }
 				 }
 	         }
-			System.out.println(list.toString());
+			System.out.println(l.toString());
 //			ireader.close();
 //			isearcher.getTopReaderContext();
 			
@@ -130,7 +131,7 @@ public class LuceneSearchFile {
 //		        writer.close();
 //		    }
 //		    public static void main(String[] args) throws IOException, ParseException {
-//				getIndexWriter("F:\\AcceptanceFile\\付祖生");
+//				getIndexWriter("F:\\maven\\samworkspace\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\CFY-System\\AcceptanceFile\\全文索引_test\\全文索引_test-研发\\全文索引_test-研发-付祖生");
 //			}
 }
 	  
